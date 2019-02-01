@@ -22,8 +22,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("| Field | Type | Description |")
-	fmt.Println("| ----- | ---- | ----------- |")
 	if err := findStructs(bufio.NewReader(f)); err != nil {
 		log.Fatal(err)
 	}
@@ -65,10 +63,14 @@ func findStructs(file io.Reader) error {
 // TODO: prototype
 func printMeta(name string, node *ast.StructType) {
 	var buf bytes.Buffer
+
+	buf.WriteString(fmt.Sprintf("## %s\n", name))
+	buf.WriteString("| Field | Type | Description |\n")
+	buf.WriteString("| ----- | ---- | ----------- |\n")
 	for _, f := range node.Fields.List {
 		v := f.Tag.Value[strings.Index(f.Tag.Value, "json:\"")+6:]
 		v = v[:strings.Index(v, "\"")]
 		buf.WriteString(fmt.Sprintf("| %s | %s | %s |\n", v, f.Type, strings.TrimSpace(f.Comment.Text())))
 	}
-	fmt.Print(buf.String())
+	fmt.Println(buf.String())
 }
